@@ -47,4 +47,4 @@ jobs:
         run: find src -type f -name "*.php" -exec php -l {} \;
 
       - name: Run PHPUnit
-        run: vendor/bin/phpunit --testdox
+        run: composer exec phpunit -- --testdox
