@@ -8,7 +8,7 @@ El microservicio Symfony forma parte del backend monolítico que publica eventos
 
 ## Objetivo del Microservicio Symfony
 
-El microservicio Symfony se encarga de:
+El microservicio se encarga de:
 
 1. Publicar eventos de bloques listos para distribución a Redis.
 2. Permitir la inserción de datos de prueba mediante comandos de consola.
