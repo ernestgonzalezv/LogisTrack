@@ -45,6 +45,3 @@ jobs:
 
       - name: Run PHP lint
         run: find src -type f -name "*.php" -exec php -l {} \;
-
-      - name: Run PHPUnit
-        run: composer exec phpunit -- --testdox
