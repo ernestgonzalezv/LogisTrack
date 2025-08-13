@@ -1,0 +1,53 @@
+parameters:
+    redis_dsn: '%env(REDIS_DSN)%'
+
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        public: false
+
+    # Redis Client
+    Predis\Client:
+        arguments:
+            $parameters: '%redis_dsn%'
+
+    App\Infrastructure\Redis\RedisClient:
+        arguments:
+            $predisClient: '@Predis\Client'
+
+    # Redis Publisher
+    App\Infrastructure\Redis\RedisBlockPublisher:
+        arguments:
+            $redisClient: '@App\Infrastructure\Redis\RedisClient'
+
+    # Interfaces
+    App\Domain\Repository\BlockPublisherInterface:
+        alias: App\Infrastructure\Redis\RedisBlockPublisher
+
+    # Mappers
+    App\Application\Mappers\Block\BlockMapper: ~
+    App\Application\Mappers\Block\BlockPublishRequestToDtoMapper: ~
+
+    # UseCases
+    App\Application\UseCases\Block\PublishBlockUseCase:
+        arguments:
+            $publisher: '@App\Domain\Repository\BlockPublisherInterface'
+            $mapper: '@App\Application\Mappers\Block\BlockMapper'
+
+    # Validators
+    App\Application\Validators\Block\PublishBlockPublishRequestValidator: ~
+
+    # Controllers
+    App\Presentation\Controller\BlockController:
+        tags: ['controller.service_arguments']
+        public: true
+
+    # Console commands
+    App\Presentation\Console\PublishBlockCommand:
+        tags: ['console.command']
+        public: true
+
+    App\Presentation\Console\SeedBlocksCommand:
+        tags: ['console.command']
+        public: true

@@ -1,0 +1,10 @@
+validation:
+    not_blank: "Este valor no debe estar vacío."
+    type_integer: "Este valor debe ser de tipo entero."
+    type_array: "Este valor debe ser de tipo arreglo."
+    datetime_format: "Este valor debe ser una fecha y hora válida con el formato Y-m-d H:i:s."
+
+error:
+    invalid_json_body: "Cuerpo JSON inválido."
+    validation_failed: "Validación fallida."
+    publishing_failed: "Error al publicar: %message%"

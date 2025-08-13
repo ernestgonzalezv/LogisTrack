@@ -1,0 +1,23 @@
+services:
+    symfony_app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: symfony_app
+        ports:
+            - "8000:80"
+        volumes:
+            - ./:/var/www/symfony
+        depends_on:
+            - redis
+
+    redis:
+        image: redis:7-alpine
+        container_name: redis_server
+        ports:
+            - "6379:6379"
+        volumes:
+            - redis-data:/data
+
+volumes:
+    redis-data:
