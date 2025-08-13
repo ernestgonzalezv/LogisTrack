@@ -1,8 +1,8 @@
 <?php
-namespace App\Application\UseCase;
+namespace App\Application\UseCases\Block;
 
-use App\Application\DTO\BlockDTO;
-use App\Application\Mapper\BlockMapper;
+use App\Application\DTO\Block\BlockDTO;
+use App\Application\Mappers\Block\BlockMapper;
 use App\Domain\Exception\BlockPublishingException;
 use App\Domain\Repository\BlockPublisherInterface;
 

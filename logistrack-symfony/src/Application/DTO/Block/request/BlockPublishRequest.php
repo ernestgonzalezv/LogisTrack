@@ -1,7 +1,7 @@
 <?php
-namespace App\Application\DTO;
+namespace App\Application\DTO\Block\request;
 
-class BlockDTO
+class BlockPublishRequest
 {
     public int $orderId;
     public int $blockId;

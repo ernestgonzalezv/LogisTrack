@@ -1,7 +1,7 @@
 <?php
-namespace App\Application\Mapper;
+namespace App\Application\Mappers\Block;
 
-use App\Application\DTO\BlockDTO;
+use App\Application\DTO\Block\BlockDTO;
 use App\Domain\Model\Block;
 
 class BlockMapper

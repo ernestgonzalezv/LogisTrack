@@ -1,13 +1,15 @@
 <?php
+
 namespace App\Presentation\Console;
 
-use App\Application\DTO\BlockDTO;
-use App\Application\UseCase\PublishBlockUseCase;
+use App\Application\DTO\Block\BlockDTO;
+use App\Application\UseCases\Block\PublishBlockUseCase;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 #[AsCommand(name: 'logistrack:seed-blocks')]
 class SeedBlocksCommand extends Command
@@ -17,8 +19,10 @@ class SeedBlocksCommand extends Command
         $this->addArgument('count', InputArgument::OPTIONAL, 'Number of blocks to seed', 10);
     }
 
-    public function __construct(private PublishBlockUseCase $useCase)
-    {
+    public function __construct(
+        private PublishBlockUseCase $useCase,
+        private TranslatorInterface $translator
+    ) {
         parent::__construct();
     }
 
@@ -26,7 +30,7 @@ class SeedBlocksCommand extends Command
     {
         $count = (int) $input->getArgument('count');
 
-        for ($i=0; $i<$count; $i++) {
+        for ($i = 0; $i < $count; $i++) {
             $data = [
                 'orderId' => random_int(1000, 9999),
                 'blockId' => random_int(1, 10),
@@ -41,9 +45,9 @@ class SeedBlocksCommand extends Command
             try {
                 $blockDTO = new BlockDTO($data);
                 $id = $this->useCase->execute($blockDTO);
-                $output->writeln("<info>Seeded block #".($i+1)." with Redis ID: $id</info>");
+                $output->writeln($this->translator->trans('seed_block_success', ['%number%' => $i + 1, '%id%' => $id]));
             } catch (\Exception $e) {
-                $output->writeln("<error>Error seeding block #".($i+1).": {$e->getMessage()}</error>");
+                $output->writeln($this->translator->trans('error_seeding_block', ['%number%' => $i + 1, '%error%' => $e->getMessage()]));
                 return Command::FAILURE;
             }
         }

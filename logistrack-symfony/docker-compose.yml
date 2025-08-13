@@ -1,7 +1,5 @@
-version: '3.8'
-
 services:
-    symfony:
+    symfony_app:
         build:
             context: .
             dockerfile: Dockerfile
