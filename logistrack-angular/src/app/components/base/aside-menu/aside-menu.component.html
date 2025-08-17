@@ -1,0 +1,32 @@
+<div class="flex h-screen">
+  <!-- 🔹 Sidebar -->
+  <aside class="w-64 bg-blue-900 text-white shadow-lg flex flex-col">
+    <!-- Logo / Título -->
+    <div class="p-4 text-2xl font-bold border-b border-blue-700">
+      Panel de Procesos
+    </div>
+
+    <!-- Menú -->
+    <nav class="flex-1 mt-4">
+      <ul>
+        <li *ngFor="let item of menuItems">
+          <a
+            [routerLink]="item.route"
+            routerLinkActive="bg-white text-blue-900 font-semibold"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300
+                   hover:bg-white hover:text-blue-900 transform hover:translate-x-2"
+          >
+            <span class="material-icons">{{ item.icon }}</span>
+            <span class="font-medium">{{ item.name }}</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- 🔹 Contenido -->
+  <main class="flex-1 bg-gray-50 p-6 overflow-auto">
+    <router-outlet></router-outlet>
+  </main>
+</div>
