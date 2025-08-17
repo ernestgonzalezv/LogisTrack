@@ -1,0 +1,52 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # --------------------------
+      # Crear red Docker si no existe
+      # --------------------------
+      - name: Create Docker network
+        run: docker network create logistrack_network || true
+
+      # --------------------------
+      # Build Angular en GH Actions
+      # --------------------------
+      - name: Build Angular
+        run: |
+          cd logistrack-angular
+          npm ci
+          npm run build -- --output-path=dist/logistrack-angular --configuration=production
+
+      # --------------------------
+      # Levantar contenedores de Django y Symfony para tests
+      # --------------------------
+      - name: Build and up Docker Compose
+        run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
+
+
+      # --------------------------
+      # Subir artefactos (Angular build) para QA
+      # --------------------------
+      - name: Upload Angular build as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: angular-build
+          path: ./logistrack-angular/dist/**
+
+      # --------------------------
+      # Limpiar contenedores
+      # --------------------------
+      - name: Stop Docker Compose
+        run: docker compose -f docker-compose.yml down

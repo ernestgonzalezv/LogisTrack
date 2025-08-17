@@ -1,5 +1,3 @@
-version: '3.9'
-
 networks:
   logistrack_network:
     external: true
@@ -36,6 +34,32 @@ services:
       - redis-data:/data
     networks:
       - logistrack_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ----------------------
+  # MySQL
+  # ----------------------
+  logistrack_mysql:
+    image: mysql:8.0
+    container_name: logistrack_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: logis_track_db
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - logistrack_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # ----------------------
   # Django
@@ -81,22 +105,6 @@ services:
       - logistrack_network
     environment:
       API_URL: "http://django_app:8080/"
-
-  # ----------------------
-  # MySQL
-  # ----------------------
-  logistrack_mysql:
-    image: mysql:8.0
-    container_name: logistrack_mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: logis_track_db
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    networks:
-      - logistrack_network
 
   # ----------------------
   # phpMyAdmin

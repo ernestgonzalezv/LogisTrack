@@ -1,0 +1,73 @@
+name: Main Release
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*.*.*'   # Se activará cuando se cree un tag con formato vX.Y.Z
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # --------------------------
+      # Crear red Docker si no existe
+      # --------------------------
+      - name: Create Docker network
+        run: docker network create logistrack_network || true
+
+      # --------------------------
+      # Build Angular en GH Actions
+      # --------------------------
+      - name: Build Angular
+        run: |
+          cd logistrack-angular
+          npm ci
+          npm run build -- --output-path=dist/logistrack-angular --configuration=production
+
+      # --------------------------
+      # Levantar contenedores de Django y Symfony para tests y coverage
+      # --------------------------
+      - name: Build and up Docker Compose
+        run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
+
+      # --------------------------
+      # Django migrations, tests y coverage
+      # --------------------------
+      - name: Django migrations, tests and coverage
+        run: |
+          docker compose exec -T django_app python manage.py migrate
+          docker compose exec -T django_app coverage run --source='.' manage.py test
+          docker compose exec -T django_app coverage xml
+          docker compose exec -T django_app coverage html
+
+      # --------------------------
+      # Subir Angular y Django como release assets
+      # --------------------------
+      - name: Upload Angular build as release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Angular Build
+          files: logistrack-angular/dist/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Django static/ as release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Django static
+          files: logistrack-django/static/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --------------------------
+      # Limpiar contenedores
+      # --------------------------
+      - name: Stop Docker Compose
+        run: docker compose -f docker-compose.yml down
