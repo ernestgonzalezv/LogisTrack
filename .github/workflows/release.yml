@@ -19,22 +19,22 @@ jobs:
       # --------------------------
       - name: Build all services with Docker Compose
         run: |
-          docker-compose -f docker-compose.yml up --build -d
+          docker compose -f docker-compose.yml up --build -d
           
           # ---------------- Angular ----------------
           echo "Running Angular lint, test and build"
-          docker-compose exec -T angular_app npm ci
-          docker-compose exec -T angular_app npm run lint
-          docker-compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
-          docker-compose exec -T angular_app npm run build --prod
+          docker compose exec -T angular_app npm ci
+          docker compose exec -T angular_app npm run lint
+          docker compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
+          docker compose exec -T angular_app npm run build --prod
 
           # ---------------- Django ----------------
           echo "Running Django migrations, tests and coverage"
-          docker-compose exec -T django_app python manage.py migrate
-          docker-compose exec -T django_app python manage.py test
-          docker-compose exec -T django_app coverage run --source='.' manage.py test
-          docker-compose exec -T django_app coverage xml
-          docker-compose exec -T django_app coverage html
+          docker compose exec -T django_app python manage.py migrate
+          docker compose exec -T django_app python manage.py test
+          docker compose exec -T django_app coverage run --source='.' manage.py test
+          docker compose exec -T django_app coverage xml
+          docker compose exec -T django_app coverage html
 
       # --------------------------
       # Subir Angular y Django como release assets
@@ -61,4 +61,4 @@ jobs:
       # Limpiar contenedores
       # --------------------------
       - name: Stop Docker Compose
-        run: docker-compose -f docker-compose.yml down
+        run: docker compose -f docker-compose.yml down

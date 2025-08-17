@@ -19,19 +19,19 @@ jobs:
       # --------------------------
       - name: Set up Docker Build
         run: |
-          docker-compose -f docker-compose.yml up --build -d
+          docker compose -f docker-compose.yml up --build -d
           
           # ---------------- Angular ----------------
           echo "Running Angular lint, test and build"
-          docker-compose exec -T angular_app npm ci
-          docker-compose exec -T angular_app npm run lint
-          docker-compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
-          docker-compose exec -T angular_app npm run build --prod
+          docker compose exec -T angular_app npm ci
+          docker compose exec -T angular_app npm run lint
+          docker compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
+          docker compose exec -T angular_app npm run build --prod
 
           # ---------------- Django ----------------
           echo "Running Django migrations and tests"
-          docker-compose exec -T django_app python manage.py migrate
-          docker-compose exec -T django_app python manage.py test
+          docker compose exec -T django_app python manage.py migrate
+          docker compose exec -T django_app python manage.py test
 
       # --------------------------
       # Subir artefactos (Angular build) para QA
@@ -46,7 +46,5 @@ jobs:
       # Limpiar contenedores
       # --------------------------
       - name: Stop Docker Compose
-        run: docker-compose -f docker-compose.yml down
+        run: docker compose -f docker-compose.yml down
 
-      - name: Run PHPUnit
-        run: vendor/bin/phpunit --testdox
