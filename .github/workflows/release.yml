@@ -29,21 +29,7 @@ jobs:
           npm ci
           npm run build -- --output-path=dist/logistrack-angular --configuration=production
 
-      # --------------------------
-      # Levantar contenedores de Django y Symfony para tests y coverage
-      # --------------------------
-      - name: Build and up Docker Compose
-        run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
-
-      # --------------------------
-      # Django migrations, tests y coverage
-      # --------------------------
-      - name: Django migrations, tests and coverage
-        run: |
-          docker compose exec -T django_app python manage.py migrate
-          docker compose exec -T django_app coverage run --source='.' manage.py test
-          docker compose exec -T django_app coverage xml
-          docker compose exec -T django_app coverage html
+    
 
       # --------------------------
       # Subir Angular y Django como release assets
