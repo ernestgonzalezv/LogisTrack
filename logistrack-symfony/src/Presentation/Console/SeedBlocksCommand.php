@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Uid\Uuid;
 
 #[AsCommand(name: 'logistrack:seed-blocks')]
 class SeedBlocksCommand extends Command
@@ -32,12 +33,12 @@ class SeedBlocksCommand extends Command
 
         for ($i = 0; $i < $count; $i++) {
             $data = [
-                'orderId' => random_int(1000, 9999),
-                'blockId' => random_int(1, 10),
-                'driverId' => random_int(1, 5),
+                'orderId' => Uuid::v4()->toRfc4122(),
+                'blockId' => Uuid::v4()->toRfc4122(),
+                'driverId' => Uuid::v4()->toRfc4122(),
                 'products' => [
-                    ['id' => random_int(1, 10), 'sku' => 'PROD-' . random_int(1, 100), 'qty' => random_int(1, 5)],
-                    ['id' => random_int(11, 20), 'sku' => 'PROD-' . random_int(101, 200), 'qty' => random_int(1, 3)],
+                    ['id' => Uuid::v4()->toRfc4122(), 'sku' => 'PROD-' . Uuid::v4()->toRfc4122(), 'qty' => random_int(1, 5)],
+                    ['id' => Uuid::v4()->toRfc4122(), 'sku' => 'PROD-' . Uuid::v4()->toRfc4122(), 'qty' => random_int(1, 3)],
                 ],
                 'dispatchDate' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
             ];
