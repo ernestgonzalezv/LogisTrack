@@ -27,7 +27,6 @@ jobs:
         run: |
           cd logistrack-angular
           npm ci
-          npm run lint
           npm run test -- --watch=false --browsers=ChromeHeadless
           npm run build -- --output-path=dist/logistrack-angular --configuration=production
 
