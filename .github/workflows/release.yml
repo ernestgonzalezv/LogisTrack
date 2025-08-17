@@ -14,7 +14,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+
       # --------------------------
+      # Crear red Docker si no existe
+      # --------------------------
+      - name: Create Docker network
+        run: docker network create logistrack_network || true
+
+        # --------------------------
       # Build y tests con Docker Compose
       # --------------------------
       - name: Build all services with Docker Compose
