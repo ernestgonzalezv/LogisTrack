@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BlockPublishResponse
 {
-    public static function success($data = null, ?string $message = null, int $statusCode = 200): JsonResponse
+    public static function success(array|string|null $data = null, ?string $message = null, int $statusCode = 200): JsonResponse
     {
         return new JsonResponse([
             'success' => true,
@@ -14,7 +14,7 @@ class BlockPublishResponse
         ], $statusCode);
     }
 
-    public static function error(string $message, $data = null, int $statusCode = 400): JsonResponse
+    public static function error(string $message, array|string|null $data = null, int $statusCode = 400): JsonResponse
     {
         return new JsonResponse([
             'success' => false,

@@ -1,31 +1,53 @@
 <?php
 namespace App\Domain\Model;
 
+use DateTimeInterface;
+use Symfony\Component\Uid\Uuid;
+
 class Block
 {
-    private int $orderId;
-    private int $blockId;
-    private int $driverId;
+    private string $orderId;
+    private string $blockId;
+    private string $driverId;
     private array $products;
-    private \DateTimeInterface $dispatchDate;
+    private DateTimeInterface $dispatchDate;
 
     public function __construct(
-        int $orderId,
-        int $blockId,
-        int $driverId,
+        ?string $orderId,
+        ?string $blockId,
+        ?string $driverId,
         array $products,
-        \DateTimeInterface $dispatchDate
+        DateTimeInterface $dispatchDate
     ) {
-        $this->orderId = $orderId;
-        $this->blockId = $blockId;
-        $this->driverId = $driverId;
+        $this->orderId = $orderId ?? Uuid::v4()->toRfc4122();
+        $this->blockId = $blockId ?? Uuid::v4()->toRfc4122();
+        $this->driverId = $driverId ?? Uuid::v4()->toRfc4122();
         $this->products = $products;
         $this->dispatchDate = $dispatchDate;
     }
 
-    public function getOrderId(): int { return $this->orderId; }
-    public function getBlockId(): int { return $this->blockId; }
-    public function getDriverId(): int { return $this->driverId; }
-    public function getProducts(): array { return $this->products; }
-    public function getDispatchDate(): \DateTimeInterface { return $this->dispatchDate; }
+    public function getOrderId(): string
+    {
+        return $this->orderId;
+    }
+
+    public function getBlockId(): string
+    {
+        return $this->blockId;
+    }
+
+    public function getDriverId(): string
+    {
+        return $this->driverId;
+    }
+
+    public function getProducts(): array
+    {
+        return $this->products;
+    }
+
+    public function getDispatchDate(): DateTimeInterface
+    {
+        return $this->dispatchDate;
+    }
 }

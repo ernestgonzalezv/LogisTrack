@@ -9,6 +9,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
+use Symfony\Component\Uid\Uuid;
 
 #[AsCommand(name: 'logistrack:publish-block')]
 class PublishBlockCommand extends Command
@@ -23,12 +24,12 @@ class PublishBlockCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $data = [
-            'orderId' => random_int(1000, 9999),
-            'blockId' => random_int(1, 10),
-            'driverId' => random_int(1, 5),
+            'orderId' => Uuid::v4()->toRfc4122(),
+            'blockId' => Uuid::v4()->toRfc4122(),
+            'driverId' => Uuid::v4()->toRfc4122(),
             'products' => [
-                ['id' => 1, 'sku' => 'PROD-1', 'qty' => 2],
-                ['id' => 2, 'sku' => 'PROD-2', 'qty' => 1],
+                ['id' => Uuid::v4()->toRfc4122(), 'sku' => 'PROD-1', 'qty' => 2],
+                ['id' => Uuid::v4()->toRfc4122(), 'sku' => 'PROD-2', 'qty' => 1],
             ],
             'dispatchDate' => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
         ];
