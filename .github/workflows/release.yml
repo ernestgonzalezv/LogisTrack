@@ -14,11 +14,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # --------------------------
-      # Crear red Docker si no existe
-      # --------------------------
-      - name: Create Docker network
-        run: docker network create logistrack_network || true
 
       # --------------------------
       # Build Angular en GH Actions
@@ -52,8 +47,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # --------------------------
-      # Limpiar contenedores
-      # --------------------------
-      - name: Stop Docker Compose
-        run: docker compose -f docker-compose.yml down
