@@ -3,9 +3,9 @@ namespace App\Application\DTO\Block;
 
 class BlockDTO
 {
-    public int $orderId;
-    public int $blockId;
-    public int $driverId;
+    public string $orderId;
+    public string $blockId;
+    public string $driverId;
     public array $products;
     public string $dispatchDate;
 

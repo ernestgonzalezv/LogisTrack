@@ -1,6 +1,5 @@
 <?php
 namespace App\Application\Validators\Block;
-
 use App\Application\DTO\Block\request\BlockPublishRequest;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -23,15 +22,15 @@ class BlockPublishRequestValidator
         $constraints = new Assert\Collection([
             'orderId' => [
                 new Assert\NotBlank(message: $this->translator->trans('validation.not_blank')),
-                new Assert\Type(['type' => 'integer', 'message' => $this->translator->trans('validation.type_integer')])
+                new Assert\Uuid(message: $this->translator->trans('validation.uuid')),
             ],
             'blockId' => [
                 new Assert\NotBlank(message: $this->translator->trans('validation.not_blank')),
-                new Assert\Type(['type' => 'integer', 'message' => $this->translator->trans('validation.type_integer')])
+                new Assert\Uuid(message: $this->translator->trans('validation.uuid')),
             ],
             'driverId' => [
                 new Assert\NotBlank(message: $this->translator->trans('validation.not_blank')),
-                new Assert\Type(['type' => 'integer', 'message' => $this->translator->trans('validation.type_integer')])
+                new Assert\Uuid(message: $this->translator->trans('validation.uuid')),
             ],
             'products' => [
                 new Assert\NotBlank(message: $this->translator->trans('validation.not_blank')),

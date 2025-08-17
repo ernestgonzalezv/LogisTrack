@@ -1,6 +1,6 @@
 validation:
     not_blank: "This value should not be blank."
-    type_integer: "This value should be of type integer."
+    uuid: "This value should be a valid UUID."
     type_array: "This value should be of type array."
     datetime_format: "This value should be a valid datetime with format Y-m-d H:i:s."
 
