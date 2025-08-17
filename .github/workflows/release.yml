@@ -1,0 +1,64 @@
+name: Main Release
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'v*.*.*'   # Se activará cuando se cree un tag con formato vX.Y.Z
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # --------------------------
+      # Build y tests con Docker Compose
+      # --------------------------
+      - name: Build all services with Docker Compose
+        run: |
+          docker-compose -f docker-compose.yml up --build -d
+          
+          # ---------------- Angular ----------------
+          echo "Running Angular lint, test and build"
+          docker-compose exec -T angular_app npm ci
+          docker-compose exec -T angular_app npm run lint
+          docker-compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
+          docker-compose exec -T angular_app npm run build --prod
+
+          # ---------------- Django ----------------
+          echo "Running Django migrations, tests and coverage"
+          docker-compose exec -T django_app python manage.py migrate
+          docker-compose exec -T django_app python manage.py test
+          docker-compose exec -T django_app coverage run --source='.' manage.py test
+          docker-compose exec -T django_app coverage xml
+          docker-compose exec -T django_app coverage html
+
+      # --------------------------
+      # Subir Angular y Django como release assets
+      # --------------------------
+      - name: Upload Angular build as release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Angular Build
+          files: logistrack-angular/dist/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Django static/ as release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Django static
+          files: logistrack-django/static/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # --------------------------
+      # Limpiar contenedores
+      # --------------------------
+      - name: Stop Docker Compose
+        run: docker-compose -f docker-compose.yml down

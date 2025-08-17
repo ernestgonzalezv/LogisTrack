@@ -1,0 +1,52 @@
+name: PR Checks
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # --------------------------
+      # Build y tests con Docker Compose
+      # --------------------------
+      - name: Set up Docker Build
+        run: |
+          docker-compose -f docker-compose.yml up --build -d
+          
+          # ---------------- Angular ----------------
+          echo "Running Angular lint, test and build"
+          docker-compose exec -T angular_app npm ci
+          docker-compose exec -T angular_app npm run lint
+          docker-compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
+          docker-compose exec -T angular_app npm run build --prod
+
+          # ---------------- Django ----------------
+          echo "Running Django migrations and tests"
+          docker-compose exec -T django_app python manage.py migrate
+          docker-compose exec -T django_app python manage.py test
+
+      # --------------------------
+      # Subir artefactos (Angular build) para QA
+      # --------------------------
+      - name: Upload Angular build as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: angular-build
+          path: ./logistrack-angular/dist/**
+
+      # --------------------------
+      # Limpiar contenedores
+      # --------------------------
+      - name: Stop Docker Compose
+        run: docker-compose -f docker-compose.yml down
+
+      - name: Run PHPUnit
+        run: vendor/bin/phpunit --testdox
