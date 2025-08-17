@@ -1,0 +1,30 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  margin: 1rem auto;
+  max-width: 100%;
+  box-shadow: -1px 3px 66px 0px rgba(0, 0, 0, 0.75);
+  padding: 1rem;
+}
+
+.mat-elevation-z8 {
+  border-radius: 8px;
+}
+
+.full-width-table {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  min-width: 500px;
+}
+
+.mat-header-cell {
+  text-align: left;
+  max-width: 300px;
+}
+
+.mat-paginator {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: flex-end;
+}
