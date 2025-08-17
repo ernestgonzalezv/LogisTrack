@@ -21,21 +21,27 @@ jobs:
         run: docker network create logistrack_network || true
 
       # --------------------------
-      # Build y tests con Docker Compose
+      # Build Angular en GH Actions
       # --------------------------
-      - name: Set up Docker Build
+      - name: Build Angular
         run: |
-          docker compose -f docker-compose.yml up --build -d
-          
-          # ---------------- Angular ----------------
-          echo "Running Angular lint, test and build"
-          docker compose exec -T angular_app npm ci
-          docker compose exec -T angular_app npm run lint
-          docker compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
-          docker compose exec -T angular_app npm run build --prod
+          cd logistrack-angular
+          npm ci
+          npm run lint
+          npm run test -- --watch=false --browsers=ChromeHeadless
+          npm run build -- --output-path=dist/logistrack-angular --configuration=production
 
-          # ---------------- Django ----------------
-          echo "Running Django migrations and tests"
+      # --------------------------
+      # Levantar contenedores de Django y Symfony para tests
+      # --------------------------
+      - name: Build and up Docker Compose
+        run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
+
+      # --------------------------
+      # Django migrations y tests
+      # --------------------------
+      - name: Django migrations and tests
+        run: |
           docker compose exec -T django_app python manage.py migrate
           docker compose exec -T django_app python manage.py test
 
