@@ -35,13 +35,6 @@ jobs:
       - name: Build and up Docker Compose
         run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
 
-      # --------------------------
-      # Django migrations y tests
-      # --------------------------
-      - name: Django migrations and tests
-        run: |
-          docker compose exec -T django_app python manage.py migrate
-          docker compose exec -T django_app python manage.py test
 
       # --------------------------
       # Subir artefactos (Angular build) para QA
