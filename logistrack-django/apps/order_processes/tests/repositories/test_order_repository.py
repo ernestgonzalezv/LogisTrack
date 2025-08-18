@@ -3,6 +3,8 @@ import uuid
 from datetime import datetime, timedelta
 
 from apps.order_processes.application.core.paging.models.page_search_args_input import FilterOption, SortingOption
+from apps.order_processes.domain.enums.incidence_status import IncidenceStatus
+from apps.order_processes.domain.enums.incidence_type import IncidenceType
 from apps.order_processes.infrastructure.repositories.order_repository import OrderRepository
 from apps.order_processes.application.core.paging.models.page_search_args import PageSearchArgs
 from apps.order_processes.infrastructure.orm_models.models import (
@@ -10,7 +12,7 @@ from apps.order_processes.infrastructure.orm_models.models import (
     Pyme as PymeModel,
     DistributionCenter as DCModel,
     Product as ProductModel,
-    OrderProduct as OrderProductModel,
+    OrderProduct as OrderProductModel, Incidence, BlockOrder, Driver, Block,
 )
 from apps.order_processes.domain.entities.order import Order
 from apps.order_processes.domain.enums.order_status import OrderStatus
@@ -137,3 +139,93 @@ def test_order_repository_handles_error(monkeypatch):
     result = repo.get_orders_by_stage(page_args)
     assert result.error is not None
     assert result.Data == []
+
+@pytest.mark.django_db
+def test_order_repository_filter_by_distribution_center_name():
+    repo = OrderRepository()
+    pyme = PymeModel.objects.create(id=uuid.uuid4(), name="P1", city="X")
+    dc = DCModel.objects.create(id=uuid.uuid4(), name="MainDC", city="Y")
+    OrderModel.objects.create(
+        id=uuid.uuid4(), pyme=pyme, distribution_center=dc,
+        dispatch_date=datetime.now(), status=OrderStatus.PREPARATION.value,
+        total_weight=1, total_volume=1
+    )
+    page_args = PageSearchArgs(
+        page_index=0, page_size=10,
+        filtering_options=[FilterOption(field="distribution_center_name", value="Main")]
+    )
+    result = repo.get_orders_by_stage(page_args)
+    assert all("Main" in o.distribution_center.name for o in result.Data)
+
+
+
+@pytest.mark.django_db
+def test_order_repository_filter_by_dispatch_date_range():
+    repo = OrderRepository()
+    pyme = PymeModel.objects.create(id=uuid.uuid4(), name="P1", city="X")
+    dc = DCModel.objects.create(id=uuid.uuid4(), name="DC1", city="Y")
+
+    order = OrderModel.objects.create(
+        id=uuid.uuid4(), pyme=pyme, distribution_center=dc,
+        dispatch_date=datetime(2025, 1, 1),
+        status=OrderStatus.PREPARATION.value, total_weight=1, total_volume=1
+    )
+
+    # rango incluye el 1 de enero 2025
+    page_args = PageSearchArgs(
+        page_index=0, page_size=10,
+        filtering_options=[
+            FilterOption(field="dispatch_date_start", value=datetime(2024, 12, 31)),
+            FilterOption(field="dispatch_date_end", value=datetime(2025, 1, 2)),
+        ]
+    )
+    result = repo.get_orders_by_stage(page_args)
+    assert any(o.id == order.id for o in result.Data)
+
+
+@pytest.mark.django_db
+def test_order_repository_filter_with_unknown_field(capfd):
+    repo = OrderRepository()
+    pyme = PymeModel.objects.create(id=uuid.uuid4(), name="P1", city="X")
+    dc = DCModel.objects.create(id=uuid.uuid4(), name="DC1", city="Y")
+    OrderModel.objects.create(
+        id=uuid.uuid4(), pyme=pyme, distribution_center=dc,
+        dispatch_date=datetime.now(), status=OrderStatus.PREPARATION.value,
+        total_weight=1, total_volume=1
+    )
+
+    page_args = PageSearchArgs(
+        page_index=0, page_size=10,
+        filtering_options=[FilterOption(field="unknown_field", value="???")]
+    )
+    result = repo.get_orders_by_stage(page_args)
+    # No debe romperse
+    assert result.error is None
+    out, _ = capfd.readouterr()
+    assert "unknown field" in out
+
+
+@pytest.mark.django_db
+def test_order_repository_sorting_ignores_unknown_field():
+    repo = OrderRepository()
+    pyme = PymeModel.objects.create(id=uuid.uuid4(), name="P1", city="X")
+    dc = DCModel.objects.create(id=uuid.uuid4(), name="DC1", city="Y")
+    o1 = OrderModel.objects.create(
+        id=uuid.uuid4(), pyme=pyme, distribution_center=dc,
+        dispatch_date=datetime(2024, 1, 1), status=OrderStatus.PREPARATION.value,
+        total_weight=1, total_volume=1
+    )
+    o2 = OrderModel.objects.create(
+        id=uuid.uuid4(), pyme=pyme, distribution_center=dc,
+        dispatch_date=datetime(2025, 1, 1), status=OrderStatus.PREPARATION.value,
+        total_weight=1, total_volume=1
+    )
+
+    page_args = PageSearchArgs(
+        page_index=0, page_size=10,
+        sorting_options=[SortingOption(field="status", direction="asc")]
+    )
+    result = repo.get_orders_by_stage(page_args)
+    # Como "status" no es un campo soportado en order_by, el orden no se modifica
+    ids = [o.id for o in result.Data]
+    assert set(ids) == {o1.id, o2.id}
