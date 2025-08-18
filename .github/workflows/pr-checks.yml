@@ -16,7 +16,7 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
       # --------------------------
       # Crear red Docker si no existe
@@ -59,7 +59,7 @@ jobs:
       # Upload coverage report (artifact)
       # --------------------------
       - name: Upload coverage report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: ./coverage.xml
