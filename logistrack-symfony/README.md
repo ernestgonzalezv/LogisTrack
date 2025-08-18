@@ -1,5 +1,7 @@
 # Prueba Técnica LogisTrack – Microservicio Symfony
 
+[![codecov](https://codecov.io/github/ernestgonzalezv/LogisTrack/graph/badge.svg?token=8R68FOULQG)](https://codecov.io/github/ernestgonzalezv/LogisTrack)
+
 ## Descripción del Microservicio
 
 El microservicio Symfony forma parte del backend monolítico que publica eventos de bloques consolidados listos para distribución. Los datos generados se sincronizan con otros microservicios modernos (Django REST Framework) usando Redis como bus de eventos.
