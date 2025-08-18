@@ -1,5 +1,6 @@
 # Prueba Técnica LogisTrack – Microservicio Symfony
 
+
 ## Descripción del Microservicio
 
 El microservicio Symfony forma parte del backend monolítico que publica eventos de bloques consolidados listos para distribución. Los datos generados se sincronizan con otros microservicios modernos (Django REST Framework) usando Redis como bus de eventos.

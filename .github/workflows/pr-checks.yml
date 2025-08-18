@@ -5,6 +5,10 @@ on:
     branches:
       - develop
       - main
+  push:
+    branches:
+      - develop
+      - main
 
 jobs:
   build-and-test:
@@ -36,33 +40,35 @@ jobs:
         run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
 
       # --------------------------
-      # Run Django tests con pytest
+      # Run Django tests con coverage
       # --------------------------
-      - name: Run Django tests
+      - name: ✅ Run Django tests with coverage
         run: |
-          docker compose exec -T django_app bash -c "
-          apt-get update && apt-get install -y curl wget
-          wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
-          tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
-          dockerize -wait tcp://logistrack_mysql:3306 -timeout 60s
-          pip install --upgrade pip
-          pip install pytest pytest-django pytest-mock pytest-sugar
-          export DJANGO_SETTINGS_MODULE=config.settings
-          pytest --tb=short -q
-          "
-      
+          docker compose exec -T django_app bash -c '
+            apt-get update && apt-get install -y curl wget
+            wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
+            tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
+            dockerize -wait tcp://logistrack_mysql:3306 -timeout 60s
+            pip install --upgrade pip
+            pip install pytest pytest-django pytest-mock pytest-sugar pytest-cov
+            export DJANGO_SETTINGS_MODULE=config.settings
+            pytest --cov=apps/ --cov-branch --cov-report=xml --tb=short -q
+          '
 
       # --------------------------
-      # Subir artefactos (Angular build) para QA
+      # Upload coverage report (artifact)
       # --------------------------
-      - name: Upload Angular build as artifact
+      - name: Upload coverage report
         uses: actions/upload-artifact@v4
         with:
-          name: angular-build
-          path: ./logistrack-angular/dist/**
+          name: coverage-report
+          path: ./coverage.xml
 
       # --------------------------
-      # Limpiar contenedores
+      # Upload coverage to Codecov
       # --------------------------
-      - name: Stop Docker Compose
-        run: docker compose -f docker-compose.yml down
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
