@@ -42,10 +42,19 @@ jobs:
       # --------------------------
       # Run Django tests con pytest
       # --------------------------
+      # --------------------------
+      # Run Django tests con pytest
+      # --------------------------
       - name: Run Django tests
         run: |
-          docker compose exec -T django_app bash -c "
-          apt-get update && apt-get install -y curl wget
-          wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
-          tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
-          dockerize -wa
+          docker compose exec -T django_app bash -c '
+            apt-get update && apt-get install -y curl wget
+            wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
+            tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
+            dockerize -wait tcp://logistrack_mysql:3306 -timeout 60s
+            pip install --upgrade pip
+            pip install pytest pytest-django pytest-mock pytest-sugar
+            export DJANGO_SETTINGS_MODULE=config.settings
+            pytest --tb=short -q
+          '
+      
