@@ -35,6 +35,17 @@ jobs:
       - name: Build and up Docker Compose
         run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
 
+      # --------------------------
+      # Run Django tests con pytest
+      # --------------------------
+      - name: Run Django tests
+        run: |
+          docker compose exec -T django_app bash -c "
+          pip install --upgrade pip &&
+          pip install pytest pytest-django pytest-mock pytest-sugar &&
+          export DJANGO_SETTINGS_MODULE=config.settings &&
+          pytest --tb=short -q
+          "
 
       # --------------------------
       # Subir artefactos (Angular build) para QA
