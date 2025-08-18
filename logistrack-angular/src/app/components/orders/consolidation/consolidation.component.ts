@@ -13,7 +13,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     ></app-base-table>
   `
 })
-export class ConsolidacionComponent {
+export class ConsolidationComponent {
   statusConsolidation = OrderStatus.CONSOLIDATED;
 
   consolidacionFilters = {

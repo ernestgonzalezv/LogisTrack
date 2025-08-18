@@ -37,20 +37,15 @@ export class ApiService {
   private getHttpOptions() {
     return {
       headers: new HttpHeaders({
-        'Content-Type': 'application/json',
-        // 'Authorization': `Bearer ${token}` // si más adelante usas auth
+        'Content-Type': 'application/json'
       })
     };
   }
-
-  // 👉 manejador de errores
   private handleError(error: HttpErrorResponse) {
     let errorMsg = 'Error desconocido';
     if (error.error instanceof ErrorEvent) {
-      // Error del cliente
       errorMsg = `Error: ${error.error.message}`;
     } else {
-      // Error del servidor
       errorMsg = `Error Code: ${error.status}, Message: ${error.message}`;
     }
     console.error(errorMsg);

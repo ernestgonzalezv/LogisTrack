@@ -14,7 +14,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     ></app-base-table>
   `
 })
-export class DistribucionComponent {
+export class DistributionComponent {
   statusDistribution = OrderStatus.DELIVERED;
 
   distribucionFilters = {

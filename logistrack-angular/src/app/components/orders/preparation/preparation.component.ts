@@ -13,7 +13,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     ></app-base-table>
   `
 })
-export class PreparacionComponent {
+export class PreparationComponent {
   statusPreparation = OrderStatus.PREPARATION;
 
   preparacionFilters = {

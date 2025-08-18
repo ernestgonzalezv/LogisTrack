@@ -13,7 +13,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     ></app-base-table>
   `
 })
-export class DespachoComponent {
+export class DispatchComponent {
   statusDispatch = OrderStatus.PREPARATION;
 
   despachoFilters = {

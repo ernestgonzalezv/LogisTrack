@@ -14,7 +14,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     ></app-base-table>
   `
 })
-export class ExpedicionComponent {
+export class ExpeditionComponent {
   statusExpedition = OrderStatus.DISPATCHED;
 
   expedicionFilters = {

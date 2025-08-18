@@ -6,8 +6,6 @@ import { ApiService } from '../../../services/api.service';
 
 import {Order} from "../../../../models/entities/order";
 import {transformOrder} from "../../../../models/mappers/order.mapper";
-import {getStatusText} from "../../../../models/enums/order.status";
-import {getIncidenceStatusText} from "../../../../models/enums/incidence.status";
 
 @Component({
   selector: 'app-base-table',

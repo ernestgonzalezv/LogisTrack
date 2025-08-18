@@ -14,7 +14,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     ></app-base-table>
   `
 })
-export class RecepcionComponent {
+export class ReceptionComponent {
   statusReception = OrderStatus.RECEIVED;
 
   recepcionFilters = {

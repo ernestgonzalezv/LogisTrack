@@ -1,16 +1,16 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ExpedicionComponent } from './expedicion.component';
+import { ExpeditionComponent } from './expedition.component';
 
 describe('ExpedicionComponent', () => {
-  let component: ExpedicionComponent;
-  let fixture: ComponentFixture<ExpedicionComponent>;
+  let component: ExpeditionComponent;
+  let fixture: ComponentFixture<ExpeditionComponent>;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      declarations: [ExpedicionComponent]
+      declarations: [ExpeditionComponent]
     });
-    fixture = TestBed.createComponent(ExpedicionComponent);
+    fixture = TestBed.createComponent(ExpeditionComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

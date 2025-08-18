@@ -7,12 +7,12 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 
 // Components
-import { DespachoComponent } from './components/orders/despacho/despacho.component';
-import { PreparacionComponent } from './components/orders/preparacion/preparacion.component';
-import { ExpedicionComponent } from './components/orders/expedicion/expedicion.component';
-import { RecepcionComponent } from './components/orders/recepcion/recepcion.component';
-import { ConsolidacionComponent } from './components/orders/consolidacion/consolidacion.component';
-import { DistribucionComponent } from './components/orders/distribucion/distribucion.component';
+import { DispatchComponent } from './components/orders/dispatch/dispatch.component';
+import { PreparationComponent } from './components/orders/preparation/preparation.component';
+import { ExpeditionComponent } from './components/orders/expedition/expedition.component';
+import { ReceptionComponent } from './components/orders/reception/reception.component';
+import { ConsolidationComponent } from './components/orders/consolidation/consolidation.component';
+import { DistributionComponent } from './components/orders/distribution/distribution.component';
 import { AsideMenuComponent } from './components/base/aside-menu/aside-menu.component';
 import { BaseTableComponent } from './components/base/base-table/base-table.component';
 
@@ -26,12 +26,12 @@ import {LoadingTableComponent} from "./components/base/loading-table/loading-tab
 @NgModule({
   declarations: [
     AppComponent,
-    DespachoComponent,
-    PreparacionComponent,
-    ExpedicionComponent,
-    RecepcionComponent,
-    ConsolidacionComponent,
-    DistribucionComponent,
+    DispatchComponent,
+    PreparationComponent,
+    ExpeditionComponent,
+    ReceptionComponent,
+    ConsolidationComponent,
+    DistributionComponent,
     AsideMenuComponent,
     BaseTableComponent,
     LoadingTableComponent
