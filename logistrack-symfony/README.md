@@ -1,6 +1,5 @@
 # Prueba Técnica LogisTrack – Microservicio Symfony
 
-[![codecov](https://codecov.io/github/ernestgonzalezv/LogisTrack/graph/badge.svg?token=8R68FOULQG)](https://codecov.io/github/ernestgonzalezv/LogisTrack)
 
 ## Descripción del Microservicio
 
