@@ -1,7 +1,7 @@
 
 ---
 
-# IA\_INTERACCIONES.md
+# IA_INTERACCIONES.md
 
 ## Objetivo del documento
 
@@ -10,7 +10,7 @@ Este documento sirve para dejar claro cómo usé herramientas de Inteligencia Ar
 ## Herramientas utilizadas
 
 * **GitHub Copilot**: Lo usé para sugerencias de código, ejemplos de funciones, organización de carpetas y mapeos en Angular y Django.
-* **Claude**: Solo para ideas rápidas de documentación o revisar ejemplos de arquitectura.
+* **ChatGPT**: Solo para ideas rápidas de documentación, perfiles de mapping o revisar ejemplos de arquitectura.
 
 ## Cómo me ayudó la IA
 
@@ -24,15 +24,17 @@ Este documento sirve para dejar claro cómo usé herramientas de Inteligencia Ar
 
 Perfecto, Ernesto. Aquí tienes esa sección reescrita con un tono más realista y cubano, manteniendo formalidad pero más cercano a tu manera de expresarte:
 
+## Ejemplos de interacciones 
 
-
+![ai_interactions_ref_1](assets/ai_ref_1.png)
+![ai_interactions_ref_2](assets/ai_ref_2.png)
 ## Beneficios de usar la IA
 
 Usar la IA me ayudó bastante a ahorrar tiempo, porque me evitó pasar horas escribiendo ejemplos o pensando en cómo organizar las cosas desde cero. También me dio claridad sobre toda la arquitectura y cómo se conectan los servicios entre sí, sin que me perdiera en los detalles. La documentación quedó ordenada y profesional, lista para entregar, y cada vez que tenía dudas sobre cómo armar un DTO, un mapper o un serializer, Copilot me daba un ejemplo que yo luego adaptaba a mi código, sin que la IA hiciera el trabajo completo por mí.
 
 ## Reflexión personal
 
-La IA fue un apoyo, no hizo el proyecto por mí. Me ayudó a avanzar más rápido en cosas como la documentación, la estructura de Angular y Django, mapeos de datos y serializers. Todo el código, la lógica y la integración entre Symfony, Django y Angular lo hice yo.
+La IA fue un apoyo, no hizo el proyecto por mí. Me ayudó a avanzar más rápido en cosas como la documentación, la estructura de Angular y Django, mapeos de datos y serializers.
 
 Con esto pude entregar un proyecto organizado, funcional y que cumple todos los requerimientos de la prueba, sin perder tiempo en detalles repetitivos o en estructuras que podía reutilizar gracias a la IA.
 
