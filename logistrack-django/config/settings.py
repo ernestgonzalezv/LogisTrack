@@ -40,9 +40,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_yasg',
-    'apps.users',
+    'apps.order_processes',
     'corsheaders',
-    'apps.users.infrastructure.orm_models'
+    'apps.order_processes.infrastructure.orm_models'
 ]
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
