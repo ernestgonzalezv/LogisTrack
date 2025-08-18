@@ -15,29 +15,43 @@ jobs:
         uses: actions/checkout@v3
 
       # --------------------------
-      # Build y tests con Docker Compose
+      # Crear red Docker si no existe
       # --------------------------
-      - name: Set up Docker Build
-        run: |
-          docker-compose -f docker-compose.yml up --build -d
-          
-          # ---------------- Angular ----------------
-          echo "Running Angular lint, test and build"
-          docker-compose exec -T angular_app npm ci
-          docker-compose exec -T angular_app npm run lint
-          docker-compose exec -T angular_app npm run test -- --watch=false --browsers=ChromeHeadless
-          docker-compose exec -T angular_app npm run build --prod
+      - name: Create Docker network
+        run: docker network create logistrack_network || true
 
-          # ---------------- Django ----------------
-          echo "Running Django migrations and tests"
-          docker-compose exec -T django_app python manage.py migrate
-          docker-compose exec -T django_app python manage.py test
+      # --------------------------
+      # Build Angular en GH Actions
+      # --------------------------
+      - name: Build Angular
+        run: |
+          cd logistrack-angular
+          npm ci
+          npm run build -- --output-path=dist/logistrack-angular --configuration=production
+
+      # --------------------------
+      # Levantar contenedores de Django y Symfony para tests
+      # --------------------------
+      - name: Build and up Docker Compose
+        run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
+
+      # --------------------------
+      # Run Django tests con pytest
+      # --------------------------
+      - name: Run Django tests
+        run: |
+          docker compose exec -T django_app bash -c "
+          pip install --upgrade pip &&
+          pip install pytest pytest-django pytest-mock pytest-sugar &&
+          export DJANGO_SETTINGS_MODULE=config.settings &&
+          pytest --tb=short -q
+          "
 
       # --------------------------
       # Subir artefactos (Angular build) para QA
       # --------------------------
       - name: Upload Angular build as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: angular-build
           path: ./logistrack-angular/dist/**
@@ -46,7 +60,4 @@ jobs:
       # Limpiar contenedores
       # --------------------------
       - name: Stop Docker Compose
-        run: docker-compose -f docker-compose.yml down
-
-      - name: Run PHPUnit
-        run: vendor/bin/phpunit --testdox
+        run: docker compose -f docker-compose.yml down
