@@ -1,7 +1,7 @@
 import pytest
 import uuid
 from datetime import datetime
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 from apps.order_processes.application.core.paging.models.query_result import QueryResult
 from apps.order_processes.application.core.paging.models.page_search_args_input import PageSearchArgsInput
@@ -108,3 +108,20 @@ def test_handler_returns_empty_paged_response():
     assert result.has_next is False
     assert result.has_previous is False
 
+
+@pytest.mark.django_db
+def test_handler_returns_error_when_validation_fails():
+    repo = None  # no importa porque no se llega al repo
+    handler = BlockProcessesQueryHandler(repo)
+    page_args = PageSearchArgsInput(page_index=0, page_size=10)
+    query = GetOrdersQuery(page_args=page_args)
+
+    with patch("apps.order_processes.application.features.orders.handler.orders_query_handler.validate_get_blocks_query") as mock_validate:
+        mock_validate.side_effect = Exception("Validation error")
+
+        result: PagedResponse = handler.handle(query)
+
+    assert isinstance(result, PagedResponse)
+    assert result.success is False
+    assert result.data == []
+    assert result.message == "There has been an error processing your request"
