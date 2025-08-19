@@ -2,7 +2,6 @@
 from rest_framework import serializers
 
 
-
 class FilterOptionSerializer(serializers.Serializer):
     field = serializers.CharField()
     value = serializers.CharField()
