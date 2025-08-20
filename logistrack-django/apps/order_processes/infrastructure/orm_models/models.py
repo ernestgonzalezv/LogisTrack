@@ -66,6 +66,8 @@ class Order(models.Model):
     )
     total_weight = models.FloatField()
     total_volume = models.FloatField()
+    preparation_status = models.IntegerField(default=0)  # 0=pendiente, 1=completa
+    distribution_status = models.IntegerField(default=0)  # 0=pendiente,1=entregada,2=rechazada
 
     class Meta:
         db_table = "logistrack_orders"
@@ -120,3 +122,30 @@ class Incidence(models.Model):
 
     def __str__(self):
         return f"Incidence {self.id} - {self.type}"
+
+
+
+class User(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+    address = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = "logistrack_users"
+
+    def __str__(self):
+        return self.name
+
+
+class Reception(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True)
+    reception_date = models.DateTimeField()
+
+    class Meta:
+        db_table = "logistrack_receptions"
+
+    def __str__(self):
+        return f"Reception {self.id} for Order {self.order.id}"

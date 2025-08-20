@@ -7,7 +7,7 @@ from apps.order_processes.infrastructure.orm_models.models import (
     Order as OrderModel,
     BlockOrder,
     OrderProduct as OrderProductModel,
-    Incidence as IncidenceModel,
+    Incidence as IncidenceModel, Reception,
 )
 
 class OrderRepository(IOrderRepository):
@@ -23,7 +23,7 @@ class OrderRepository(IOrderRepository):
             # Base queryset
             qs = OrderModel.objects.select_related(
                 "pyme",
-                "distribution_center"
+                "distribution_center",
             ).prefetch_related(
                 Prefetch(
                     "orderproduct_set",
@@ -36,6 +36,10 @@ class OrderRepository(IOrderRepository):
                 Prefetch(
                     "blockorder_set",
                     queryset=BlockOrder.objects.select_related("block__driver")
+                ),
+                Prefetch(
+                    "reception_set",
+                    queryset=Reception.objects.select_related("user")
                 )
             )
 

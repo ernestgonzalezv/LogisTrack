@@ -4,7 +4,7 @@ import uuid
 
 from apps.order_processes.application.features.orders.models.output.orders_output_model import PymeOutputModel, \
     DistributionCenterOutputModel, DriverOutputModel, ProductOutputModel, BlockOutputModel, IncidenceOutputModel, \
-    OrderOutputModel
+    OrderOutputModel, ReceptionOutputModel, UserOutputModel
 from apps.order_processes.domain.entities.order import Order
 from apps.order_processes.domain.entities.block import Block
 from apps.order_processes.domain.entities.incidence import Incidence
@@ -12,6 +12,8 @@ from apps.order_processes.domain.entities.order_product import OrderProduct
 from apps.order_processes.domain.entities.driver import Driver
 from apps.order_processes.domain.entities.distribution_center import DistributionCenter
 from apps.order_processes.domain.entities.pyme import Pyme
+from apps.order_processes.domain.entities.reception import Reception
+from apps.order_processes.domain.entities.user import User
 
 
 class BlockMapper:
@@ -70,6 +72,30 @@ class BlockMapper:
         ]
 
     @staticmethod
+    def map_user(user: Optional[User]) -> Optional[UserOutputModel]:
+        if user is None:
+            return None
+        return UserOutputModel(
+            id=user.id,
+            name=user.name,
+            email=user.email,
+            address=user.address
+        )
+
+    @staticmethod
+    def map_receptions(receptions: Optional[List[Reception]]) -> List[ReceptionOutputModel]:
+        if not receptions:
+            return []
+        return [
+            ReceptionOutputModel(
+                id=r.id,
+                order_id=r.order_id,
+                user=BlockMapper.map_user(r.user),
+                reception_date=r.reception_date
+            ) for r in receptions
+        ]
+
+    @staticmethod
     def map_order(order: Order) -> OrderOutputModel:
         return OrderOutputModel(
             id=order.id,
@@ -79,8 +105,11 @@ class BlockMapper:
             status=order.status,
             total_weight=order.total_weight,
             total_volume=order.total_volume,
+            preparation_status=order.preparation_status,  # <-- agregado
+            distribution_status=order.distribution_status,  # <-- agregado
             products=BlockMapper.map_products(order.products),
             block=BlockMapper.map_block(order.block),
-            incidences=BlockMapper.map_incidences(order.incidences)
+            incidences=BlockMapper.map_incidences(order.incidences),
+            receptions=BlockMapper.map_receptions(order.receptions)
         )
 
