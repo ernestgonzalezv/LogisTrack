@@ -15,9 +15,7 @@ import {Component} from "@angular/core";
 })
 export class PreparationComponent {
   statusPreparation = OrderStatus.PREPARATION;
-
   preparacionFilters = {
     pyme_name: '',
-    preparation_status: ''
   };
 }
