@@ -6,10 +6,6 @@ from apps.order_processes.domain.enums.incidence_type import IncidenceType
 from apps.order_processes.domain.enums.incidence_status import IncidenceStatus
 
 
-# ----------------------------
-# Entidades internas para la salida
-# ----------------------------
-
 class PymeOutputModel:
     id: str
     name: str
@@ -73,10 +69,10 @@ class BlockOutputModel:
 
 class IncidenceOutputModel:
     id: str
-    type: int          # ahora es entero
+    type: int
     description: str
     date: str
-    status: int        # ahora es entero
+    status: int
 
     def __init__(self, id: uuid.UUID, type: IncidenceType, description: str, date: datetime, status: IncidenceStatus):
         self.id = str(id)
@@ -86,17 +82,46 @@ class IncidenceOutputModel:
         self.status = status.value
 
 
+class UserOutputModel:
+    id: str
+    name: str
+    email: str
+    address: str
+
+    def __init__(self, id: uuid.UUID, name: str, email: str, address: str):
+        self.id = str(id)
+        self.name = name
+        self.email = email
+        self.address = address
+
+
+class ReceptionOutputModel:
+    id: str
+    order_id: str
+    user: Optional[UserOutputModel]
+    reception_date: str
+
+    def __init__(self, id: uuid.UUID, order_id: uuid.UUID, user: Optional[UserOutputModel], reception_date: datetime):
+        self.id = str(id)
+        self.order_id = str(order_id)
+        self.user = user
+        self.reception_date = reception_date.isoformat()
+
+
 class OrderOutputModel:
     id: str
     pyme: PymeOutputModel
     distribution_center: DistributionCenterOutputModel
     dispatch_date: str
-    status: int       # ahora es entero
+    status: int
     total_weight: float
     total_volume: float
+    preparation_status: int
+    distribution_status: int
     products: List[ProductOutputModel]
     block: Optional[BlockOutputModel] = None
     incidences: Optional[List[IncidenceOutputModel]] = None
+    receptions: Optional[List[ReceptionOutputModel]] = None
 
     def __init__(
         self,
@@ -107,9 +132,12 @@ class OrderOutputModel:
         status: OrderStatus,
         total_weight: float,
         total_volume: float,
+        preparation_status: int,
+        distribution_status: int,
         products: List[ProductOutputModel],
         block: Optional[BlockOutputModel] = None,
-        incidences: Optional[List[IncidenceOutputModel]] = None
+        incidences: Optional[List[IncidenceOutputModel]] = None,
+        receptions: Optional[List[ReceptionOutputModel]] = None
     ):
         self.id = str(id)
         self.pyme = pyme
@@ -118,12 +146,13 @@ class OrderOutputModel:
         self.status = status.value
         self.total_weight = total_weight
         self.total_volume = total_volume
+        self.preparation_status = preparation_status
+        self.distribution_status = distribution_status
         self.products = products
         self.block = block
         self.incidences = incidences or []
+        self.receptions = receptions or []
 
     @property
     def status_name(self) -> str:
         return OrderStatus(self.status).name
-
-

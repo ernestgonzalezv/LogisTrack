@@ -1,5 +1,6 @@
 import json
 import random
+import uuid
 from datetime import datetime
 
 from django.core.management.base import BaseCommand
@@ -7,8 +8,15 @@ from django.db import transaction
 import redis
 
 from apps.order_processes.infrastructure.orm_models.models import *
+from apps.order_processes.domain.enums.order_status import OrderStatus
+from apps.order_processes.domain.enums.incidence_status import IncidenceStatus
+from apps.order_processes.domain.enums.incidence_type import IncidenceType
 from config import settings
 
+
+# ───────────────────────────────────────────────
+# DATA SIMULADA
+# ───────────────────────────────────────────────
 PYMES_CUBA = [
     "Panadería Glez",
     "AlaSoluciones",
@@ -18,14 +26,13 @@ PYMES_CUBA = [
     "ALTEC PRODUCCIONES",
     "Dofleini",
     "Cinesoft Recreación",
- ]
+]
 CIUDADES_CUBA = ["Habana", "Artemisa", "Matanzas", "Mayabeque"]
-CDS_CUBA = ["CD Habana", "CD Santiago", "CD Matanzas"]
+
 DRIVERS_FIRST_NAMES = [
     "Jose", "Ana", "Luis", "Alfred", "Sonia", "Regla", "Carlos", "Maria", "Pedro", "Isabel",
     "Miguel", "Yosvany", "Lucia", "Ernesto", "Raul", "Carmen", "Victor", "Gloria", "Rafael", "Diana"
 ]
-
 DRIVERS_LAST_NAMES = [
     "Perez", "Rodriguez", "Gonzalez", "Martinez", "Hernandez", "Lopez", "Sanchez", "Diaz", "Alvarez", "Jimenez",
     "Torres", "Castro", "Rivera", "Mendez", "Fernandez", "Rojas", "Gomez", "Cabrera", "Vazquez", "Suarez"
@@ -36,16 +43,27 @@ PRODUCTS_CUBA = [
     {"sku": "PROD-002", "name": "Producto B", "description": "Descripción B"},
     {"sku": "PROD-003", "name": "Producto C", "description": "Descripción C"},
 ]
+
+USERS_CUBA = [
+    {"name": "admin", "email": "admin@cuba.cu", "address": "Calle Central 1, Habana"},
+    {"name": "jose", "email": "jose@cuba.cu", "address": "Calle 23, Matanzas"},
+    {"name": "maria", "email": "maria@cuba.cu", "address": "Avenida Sur, Artemisa"},
+]
+
+
+# ───────────────────────────────────────────────
+# HELPERS
+# ───────────────────────────────────────────────
 def get_or_create_pyme():
     name = random.choice(PYMES_CUBA)
     city = random.choice(CIUDADES_CUBA)
     pyme, _ = Pyme.objects.get_or_create(name=name, defaults={"city": city})
     return pyme
 
+
 def get_or_create_cd():
-    city= random.choice(CIUDADES_CUBA)
+    city = random.choice(CIUDADES_CUBA)
     name = f"CD {city}"
-    city = city
     cd, _ = DistributionCenter.objects.get_or_create(name=name, defaults={"city": city})
     return cd
 
@@ -60,18 +78,34 @@ def get_or_create_product(sku):
     )
     return product
 
+
+def get_or_create_user():
+    user_data = random.choice(USERS_CUBA)
+    user, _ = User.objects.get_or_create(
+        name=user_data["name"],
+        defaults={"email": user_data["email"], "address": user_data["address"]}
+    )
+    return user
+
+
 def get_random_order_status():
     return random.choice([status.value for status in OrderStatus])
+
 
 def get_random_incidence_status():
     return random.choice([status.value for status in IncidenceStatus])
 
 
+# ───────────────────────────────────────────────
+# EVENT PROCESSING
+# ───────────────────────────────────────────────
 @transaction.atomic
 def process_event(event):
     pyme = get_or_create_pyme()
     cd = get_or_create_cd()
+    user = get_or_create_user()
 
+    # Chofer
     first_name = random.choice(DRIVERS_FIRST_NAMES)
     last_name = random.choice(DRIVERS_LAST_NAMES)
     driver_defaults = {
@@ -95,6 +129,8 @@ def process_event(event):
             "status": get_random_order_status(),
             "total_weight": 0,
             "total_volume": 0,
+            "preparation_status": random.randint(0, 1),
+            "distribution_status": random.randint(0, 2)
         }
     )
 
@@ -113,6 +149,13 @@ def process_event(event):
         order.total_volume = total_volume
         order.save()
 
+        # Crear Reception asociada al Order y al User
+        Reception.objects.create(
+            order=order,
+            user=user,
+            reception_date=datetime.now(),
+        )
+
         # Generar incidencia aleatoria solo si es orden nueva
         if random.random() < 0.2:
             type_inc = random.choice(list(IncidenceType))
@@ -125,6 +168,10 @@ def process_event(event):
                 status=get_random_incidence_status(),
             )
 
+
+# ───────────────────────────────────────────────
+# COMMAND
+# ───────────────────────────────────────────────
 class Command(BaseCommand):
     help = 'Sincroniza bloques desde Redis y llena todas las tablas'
 
