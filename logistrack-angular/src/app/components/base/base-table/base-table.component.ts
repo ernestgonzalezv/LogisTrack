@@ -35,7 +35,7 @@ export class BaseTableComponent implements OnInit {
 
   ngOnInit() {
     if (this.columnsToShow.length) {
-      this.displayedColumns = this.columnsToShow;
+      this.displayedColumns = [...this.columnsToShow];
     }
     this.loadData();
   }
@@ -106,10 +106,7 @@ export class BaseTableComponent implements OnInit {
         }
       });
       this.data = orders.map(o => transformOrder(o, ordersCountMap));
-      // 🔹 Generar columnas dinámicamente si no se pasaron
-      if (!this.displayedColumns.length && this.data.length) {
-        this.displayedColumns = Object.keys(this.data[0]);
-      }
+
 
       this.totalCount = res.total_count || this.data.length;
       this.isLoading = false;

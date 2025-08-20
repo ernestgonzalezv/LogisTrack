@@ -8,7 +8,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     <h2>Distribución</h2>
     <app-base-table
       [endpoint]="'orders/distribution'"
-      [columnsToShow]="['id', 'driver_name', 'dispatch_date', 'status']"
+      [columnsToShow]="['id', 'driver_name', 'dispatch_date', 'distribution_status']"
       [statusFilter]="statusDistribution"
       [extraFilters]="distribucionFilters"
     ></app-base-table>
@@ -19,7 +19,7 @@ export class DistributionComponent {
 
   distribucionFilters = {
     driver_name: '',
-    status: ''
+    distribution_status: ''
   };
 }
 

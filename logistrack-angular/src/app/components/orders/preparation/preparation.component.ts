@@ -1,5 +1,5 @@
-import {Component} from "@angular/core";
 import {OrderStatus} from "../../../../models/enums/order.status";
+import {Component} from "@angular/core";
 
 @Component({
   selector: 'app-preparacion',
@@ -7,7 +7,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     <h2>Preparación</h2>
     <app-base-table
       [endpoint]="'orders/distribution'"
-      [columnsToShow]="['id', 'pyme_name', 'status', 'total_weight', 'total_volume', 'products']"
+      [columnsToShow]="['id', 'pyme_name', 'preparation_status', 'total_weight', 'total_volume', 'products']"
       [statusFilter]="statusPreparation"
       [extraFilters]="preparacionFilters"
     ></app-base-table>
@@ -18,6 +18,6 @@ export class PreparationComponent {
 
   preparacionFilters = {
     pyme_name: '',
-    status: ''
+    preparation_status: ''
   };
 }

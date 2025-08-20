@@ -7,7 +7,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
     <h2>Consolidación</h2>
     <app-base-table
       [endpoint]="'orders/distribution'"
-      [columnsToShow]="['block_id', 'driver_name', 'orders_count', 'status']"
+      [columnsToShow]="['block_id', 'driver_name', 'orders_count', 'receiver_name']"
       [statusFilter]="statusConsolidation"
       [extraFilters]="consolidacionFilters"
     ></app-base-table>
