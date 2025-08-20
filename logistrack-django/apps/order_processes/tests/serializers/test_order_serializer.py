@@ -23,6 +23,8 @@ def test_order_serializer_empty_block():
         total_weight=50.0,
         total_volume=20.0,
         products=[],
+        distribution_status=0,
+        preparation_status=0,
         block=None,
         incidences=[]
     )
@@ -36,6 +38,8 @@ def test_order_serializer_empty_block():
         "total_volume": order.total_volume,
         "products": [],
         "block": None,
+        "distribution_status": 0,
+        "preparation_status": 0,
         "incidences": []
     })
     data = serializer.data

@@ -36,6 +36,8 @@ def test_handler_returns_paged_response_success():
         status=OrderStatus.PREPARATION,
         total_weight=100.0,
         total_volume=50.0,
+        preparation_status=0,
+        distribution_status=0,
         products=[order_product],
     )
 
@@ -47,6 +49,8 @@ def test_handler_returns_paged_response_success():
         status=OrderStatus.DISPATCHED,
         total_weight=200.0,
         total_volume=80.0,
+        preparation_status=0,
+        distribution_status=0,
         products=[order_product],
     )
 

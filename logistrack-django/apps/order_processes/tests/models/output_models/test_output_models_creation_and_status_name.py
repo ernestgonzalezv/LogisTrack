@@ -33,7 +33,9 @@ def test_output_models_creation_and_status_name():
         total_volume=20.0,
         products=[product],
         block=block,
-        incidences=[incidence]
+        incidences=[incidence],
+        distribution_status=0,
+        preparation_status=0
     )
 
     # Validar atributos
@@ -45,6 +47,8 @@ def test_output_models_creation_and_status_name():
 
     # Validar status_name
     assert order.status_name == "DELIVERED"
+    assert order.distribution_status == 0
+    assert order.preparation_status == 0
 
     # Validar que incidences por defecto sea lista vacía si no se pasa
     order2 = OrderOutputModel(
@@ -55,6 +59,8 @@ def test_output_models_creation_and_status_name():
         status=OrderStatus.DELIVERED,
         total_weight=1.0,
         total_volume=2.0,
+        distribution_status=0,
+        preparation_status=0,
         products=[]
     )
     assert order2.incidences == []
