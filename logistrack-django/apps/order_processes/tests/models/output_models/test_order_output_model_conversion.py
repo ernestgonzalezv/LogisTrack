@@ -23,6 +23,8 @@ def test_order_output_model_conversion():
         total_volume=2.0,
         products=[],
         block=None,
+        distribution_status=0,
+        preparation_status=0,
         incidences=None
     )
     assert order_out.status_name == "DELIVERED"
