@@ -71,6 +71,7 @@ jobs:
 
             # Ejecutar tests
             pytest --cov=apps/ --cov-branch --cov-report=xml --tb=short -q
+          '
 
       # --------------------------
       # Upload coverage reports (artifacts)
