@@ -56,9 +56,6 @@ jobs:
       # --------------------------
       - name: ✅ Run Django tests with coverage
         run: |
-          # Crear DB de prueba en MySQL
-          docker compose exec -T logistrack_mysql bash -c "mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS test_logis_track_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'"
-
           # Ejecutar tests dentro del contenedor Django
           docker compose exec -T django_app bash -c '
             apt-get update && apt-get install -y curl wget
