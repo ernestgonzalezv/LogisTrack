@@ -69,6 +69,7 @@ jobs:
             export DJANGO_SETTINGS_MODULE=config.settings
 
             # Migraciones en la DB principal
+            python manage.py makemigrations
             python manage.py migrate --noinput
 
             # Ejecutar tests con DB de prueba y coverage
