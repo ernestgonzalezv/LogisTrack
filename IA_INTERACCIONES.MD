@@ -22,7 +22,6 @@ Este documento sirve para dejar claro cómo usé herramientas de Inteligencia Ar
 | Mapeos y Serializers                     | Transformar datos entre DTOs y modelos                         | Copilot me sugirió ejemplos de mappers y serializers para Django y Angular, facilitando convertir los objetos de Symfony y MySQL a JSON y luego a los modelos en Angular sin errores.                   |
 | Optimización de tiempo                   | Evitar pasar horas escribiendo código repetitivo               | Pude concentrarme en la lógica de negocio mientras la IA me ayudaba con ejemplos de funciones.                                                                                                  |
 
-Perfecto, Ernesto. Aquí tienes esa sección reescrita con un tono más realista y cubano, manteniendo formalidad pero más cercano a tu manera de expresarte:
 
 ## Ejemplos de interacciones 
 
