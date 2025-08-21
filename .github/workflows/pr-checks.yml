@@ -56,51 +56,48 @@ jobs:
       # --------------------------
       - name: ✅ Run Django tests with coverage
         run: |
-        # Esperar a que MySQL esté listo y crear la DB de test
-          docker compose exec -T logistrack_mysql bash -c '
-          mysql -u root -proot -e "CREATE DATABASE IF NOT EXISTS test_logis_track_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-          '
-        
-        # Ejecutar los tests dentro del contenedor Django
+          # Crear DB de prueba en MySQL
+          docker compose exec -T logistrack_mysql bash -c "mysql -u root -proot -e 'CREATE DATABASE IF NOT EXISTS test_logis_track_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;'"
+
+          # Ejecutar tests dentro del contenedor Django
           docker compose exec -T django_app bash -c '
-          apt-get update && apt-get install -y curl wget
-          wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
-          tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
-          dockerize -wait tcp://logistrack_mysql:3306 -timeout 120s
-        
-          pip install --upgrade pip
-          pip install pytest pytest-django pytest-mock pytest-sugar pytest-cov
-        
-          export DJANGO_SETTINGS_MODULE=config.settings
-        
-          # 🔹 Migraciones en la DB principal
-          python manage.py migrate --noinput
-        
-          # 🔹 Ejecutar tests con DB de prueba y coverage
-          pytest --reuse-db --cov=apps/ --cov-branch --cov-report=xml --tb=short -q
+            apt-get update && apt-get install -y curl wget
+            wget https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-linux-amd64-v0.6.1.tar.gz
+            tar -C /usr/local/bin -xzvf dockerize-linux-amd64-v0.6.1.tar.gz
+            dockerize -wait tcp://logistrack_mysql:3306 -timeout 120s
+
+            pip install --upgrade pip
+            pip install pytest pytest-django pytest-mock pytest-sugar pytest-cov
+
+            export DJANGO_SETTINGS_MODULE=config.settings
+
+            # Migraciones en la DB principal
+            python manage.py migrate --noinput
+
+            # Ejecutar tests con DB de prueba y coverage
+            pytest --reuse-db --cov=apps/ --cov-branch --cov-report=term --cov-report=xml --tb=short -q
           '
 
+      # --------------------------
+      # Upload coverage reports (artifacts)
+      # --------------------------
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: |
+            ./coverage.xml
+            ./logistrack-symfony/phpunit-coverage.xml
 
-          # --------------------------
-        # Upload coverage reports (artifacts)
-        # --------------------------
-        - name: Upload coverage reports
-          uses: actions/upload-artifact@v4
-          with:
-            name: coverage-reports
-            path: |
-              ./coverage.xml
-              ./logistrack-symfony/phpunit-coverage.xml
-
-        # --------------------------
-        # Upload coverage to Codecov (combine PHP + Django)
-        # --------------------------
-        - name: Upload coverage to Codecov
-          uses: codecov/codecov-action@v5
-          with:
-            files: |
-              ./coverage.xml
-              ./logistrack-symfony/phpunit-coverage.xml
-            flags: django,php
-            token: ${{ secrets.CODECOV_TOKEN }}
-            fail_ci_if_error: true
+      # --------------------------
+      # Upload coverage to Codecov (combine PHP + Django)
+      # --------------------------
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: |
+            ./coverage.xml
+            ./logistrack-symfony/phpunit-coverage.xml
+          flags: django,php
+          token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
