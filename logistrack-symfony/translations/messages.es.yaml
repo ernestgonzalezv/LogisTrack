@@ -8,3 +8,8 @@ error:
     invalid_json_body: "Cuerpo JSON inválido."
     validation_failed: "Validación fallida."
     publishing_failed: "Error al publicar: %message%"
+
+seed_block_success: "Bloque sembrado correctamente (número: %number%, ID: %id%)"
+error_seeding_block: "Error al sembrar bloque (número: %number%): %error%"
+publish_block_success: "Bloque publicado correctamente con ID: %id%"
+error_publishing_block: "Error al publicar bloque: %error%"
