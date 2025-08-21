@@ -36,7 +36,7 @@ services:
             $mapper: '@App\Application\Mappers\Block\BlockMapper'
 
     # Validators
-    App\Application\Validators\Block\PublishBlockPublishRequestValidator: ~
+    App\Application\Validators\Block\BlockPublishRequestValidator: ~
 
     # Controllers
     App\Presentation\Controller\BlockController:

@@ -3,7 +3,7 @@ namespace App\Presentation\Controller;
 
 use App\Application\Constants\ApiEndpoints;
 use App\Application\DTO\Block\request\BlockPublishRequest;
-use App\Application\DTO\Block\response\BlockPublishResponse;
+use App\Application\DTO\Block\response\PublishBlockResponse;
 use App\Application\Mappers\Block\BlockPublishRequestToDtoMapper;
 use App\Application\UseCases\Block\PublishBlockUseCase;
 use App\Application\Validators\Block\BlockPublishRequestValidator;
@@ -32,7 +32,7 @@ class BlockController extends AbstractController
         $data = json_decode($request->getContent(), true);
 
         if ($data === null) {
-            return BlockPublishResponse::error($this->translator->trans('invalid_json'), null, 400);
+            return PublishBlockResponse::error($this->translator->trans('invalid_json'), null, 400);
         }
 
         try {
@@ -43,21 +43,21 @@ class BlockController extends AbstractController
 
             $id = $this->useCase->execute($blockDTO);
 
-            return BlockPublishResponse::success(
+            return PublishBlockResponse::success(
                 ['redis_id' => $id],
                 $this->translator->trans('block_published_success'),
                 200
             );
 
         } catch (ValidatorException $e) {
-            return BlockPublishResponse::error(
+            return PublishBlockResponse::error(
                 $this->translator->trans('validation_failed'),
                 explode("; ", $e->getMessage()),
                 400
             );
 
         } catch (\Exception $e) {
-            return BlockPublishResponse::error(
+            return PublishBlockResponse::error(
                 $this->translator->trans('publishing_failed', ['%error%' => $e->getMessage()]),
                 null,
                 500

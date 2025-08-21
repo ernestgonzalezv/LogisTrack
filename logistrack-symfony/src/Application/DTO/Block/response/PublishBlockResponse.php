@@ -3,7 +3,7 @@ namespace App\Application\DTO\Block\response;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class BlockPublishResponse
+class PublishBlockResponse
 {
     public static function success(array|string|null $data = null, ?string $message = null, int $statusCode = 200): JsonResponse
     {
