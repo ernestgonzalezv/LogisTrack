@@ -63,9 +63,14 @@ jobs:
             dockerize -wait tcp://logistrack_mysql:3306 -timeout 60s
             pip install --upgrade pip
             pip install pytest pytest-django pytest-mock pytest-sugar pytest-cov
+
             export DJANGO_SETTINGS_MODULE=config.settings
+
+            # 🔹 Migraciones antes de los tests
+            python manage.py migrate --noinput
+
+            # Ejecutar tests
             pytest --cov=apps/ --cov-branch --cov-report=xml --tb=short -q
-          '
 
       # --------------------------
       # Upload coverage reports (artifacts)
