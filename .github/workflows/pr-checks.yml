@@ -15,6 +15,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # --------------------------
+      # Checkout code
+      # --------------------------
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -25,7 +28,7 @@ jobs:
         run: docker network create logistrack_network || true
 
       # --------------------------
-      # Build Angular en GH Actions
+      # Build Angular
       # --------------------------
       - name: Build Angular
         run: |
@@ -34,13 +37,22 @@ jobs:
           npm run build -- --output-path=dist/logistrack-angular --configuration=production
 
       # --------------------------
-      # Levantar contenedores de Django y Symfony para tests
+      # Levantar contenedores Symfony y Django
       # --------------------------
       - name: Build and up Docker Compose
-        run: docker compose -f docker-compose.yml up --build -d django_app symfony_app redis logistrack_mysql
+        run: docker compose -f docker-compose.yml up --build -d symfony_app django_app redis logistrack_mysql
 
       # --------------------------
-      # Run Django tests con coverage
+      # Run Symfony PHPUnit tests with coverage
+      # --------------------------
+      - name: ✅ Run Symfony tests with PHPUnit coverage
+        run: |
+          docker compose exec -T symfony_app bash -c '
+            phpunit --coverage-clover=/var/www/symfony/phpunit-coverage.xml
+          '
+
+      # --------------------------
+      # Run Django tests with coverage
       # --------------------------
       - name: ✅ Run Django tests with coverage
         run: |
@@ -56,19 +68,25 @@ jobs:
           '
 
       # --------------------------
-      # Upload coverage report (artifact)
+      # Upload coverage reports (artifacts)
       # --------------------------
-      - name: Upload coverage report
+      - name: Upload coverage reports
         uses: actions/upload-artifact@v4
         with:
-          name: coverage-report
-          path: ./coverage.xml
+          name: coverage-reports
+          path: |
+            ./coverage.xml
+            ./logistrack-symfony/phpunit-coverage.xml
 
       # --------------------------
-      # Upload coverage to Codecov
+      # Upload coverage to Codecov (combine PHP + Django)
       # --------------------------
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v5
         with:
-          files: ./coverage.xml
+          files: |
+            ./coverage.xml
+            ./logistrack-symfony/phpunit-coverage.xml
+          flags: django,php
           token: ${{ secrets.CODECOV_TOKEN }}
+          fail_ci_if_error: true
