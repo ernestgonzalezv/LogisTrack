@@ -46,7 +46,7 @@ class SeedBlocksCommand extends Command
             try {
                 $blockDTO = new BlockDTO($data);
                 $id = $this->useCase->execute($blockDTO);
-                $output->writeln($this->translator->trans('seed_block_success', ['%number%' => $i + 1, '%id%' => $id]));
+                $output->writeln($this->translator->trans('seed_block_success', ['%number%' => $i + 1, '%id%' => $blockDTO -> blockId]));
             } catch (\Exception $e) {
                 $output->writeln($this->translator->trans('error_seeding_block', ['%number%' => $i + 1, '%error%' => $e->getMessage()]));
                 return Command::FAILURE;
