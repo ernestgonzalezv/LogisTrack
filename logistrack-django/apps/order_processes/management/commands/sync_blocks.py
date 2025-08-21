@@ -2,7 +2,7 @@ import json
 import random
 import uuid
 from datetime import datetime
-
+from django.utils import timezone
 from django.core.management.base import BaseCommand
 from django.db import transaction
 import redis
@@ -125,7 +125,10 @@ def process_event(event):
         defaults={
             "pyme": pyme,
             "distribution_center": cd,
-            "dispatch_date": datetime.strptime(event["fecha_despacho"], "%Y-%m-%d %H:%M:%S"),
+            "dispatch_date": timezone.make_aware(
+                datetime.strptime(event["fecha_despacho"], "%Y-%m-%d %H:%M:%S"),
+                timezone.get_current_timezone()
+            ),
             "status": get_random_order_status(),
             "total_weight": 0,
             "total_volume": 0,
@@ -153,7 +156,7 @@ def process_event(event):
         Reception.objects.create(
             order=order,
             user=user,
-            reception_date=datetime.now(),
+            reception_date=timezone.now(),
         )
 
         # Generar incidencia aleatoria solo si es orden nueva
@@ -164,7 +167,7 @@ def process_event(event):
                 order=order,
                 type=type_inc.value,
                 description=f"Incidencia generada automáticamente: {type_inc.name}",
-                date=datetime.now(),
+                date=timezone.now(),
                 status=get_random_incidence_status(),
             )
 
@@ -183,13 +186,13 @@ class Command(BaseCommand):
         )
 
         last_id = '0'  # Empezar desde el primer mensaje
-        print("Iniciando sincronización de bloques...")
+        print("Starting block synchronization...")
 
         # Leer con timeout de 5 segundos
         events = r.xread({'logistrack.blocks': last_id}, count=None, block=5000)
 
         if not events:
-            print("No hay eventos nuevos, terminando sincronización.")
+            print("No new events, ending synchronization.")
             return
 
         for stream_name, messages in events:
@@ -198,8 +201,8 @@ class Command(BaseCommand):
                 try:
                     process_event(event)
                 except Exception as e:
-                    print(f"Error procesando evento {message_id}: {e}")
+                    print(f"Error processing event {message_id}: {e}")
 
             last_id = messages[-1][0]
 
-        print("Sincronización completada")
+        print("Synchronization completed")
