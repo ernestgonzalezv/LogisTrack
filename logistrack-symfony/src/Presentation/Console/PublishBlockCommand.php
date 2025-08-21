@@ -50,7 +50,9 @@ class PublishBlockCommand extends Command
         try {
             $blockDTO = new BlockDTO($data);
             $id = $this->useCase->execute($blockDTO);
-            $output->writeln("Bloque publicado con ID: " . $blockDTO->blockId);
+            $output->writeln(
+                $this->translator->trans('publish_block_success', ['%id%' => $blockDTO->blockId])
+            );
             return Command::SUCCESS;
         } catch (\Exception $e) {
             $output->writeln($this->translator->trans('error_publishing_block', ['%error%' => $e->getMessage()]));
