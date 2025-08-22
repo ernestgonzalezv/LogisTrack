@@ -5,10 +5,10 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# Copiar solo package.json y package-lock.json
+# Copiar solo package.json y package-lock.json para cache de dependencias
 COPY package*.json ./
 
-# Instalar dependencias (capa cacheable)
+# Instalar dependencias
 RUN npm install
 
 # Copiar el resto del proyecto Angular
@@ -28,6 +28,11 @@ RUN rm -rf /usr/share/nginx/html/*
 # Copiar build de Angular al path que Nginx sirve
 COPY --from=build /app/dist/logistrack-angular /usr/share/nginx/html
 
+# Copiar configuración personalizada de Nginx
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# Exponer puerto 80
 EXPOSE 80
+
+# Iniciar Nginx en primer plano
 CMD ["nginx", "-g", "daemon off;"]
