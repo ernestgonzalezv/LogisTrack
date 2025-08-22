@@ -15,7 +15,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
   `
 })
 export class ExpeditionComponent {
-  statusExpedition = OrderStatus.DISPATCHED;
+  statusExpedition = OrderStatus.EXPEDITION;
 
   expedicionFilters = {
     pyme_name: '',
