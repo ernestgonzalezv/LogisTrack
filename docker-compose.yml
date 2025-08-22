@@ -84,8 +84,10 @@ services:
       MYSQL_PASSWORD: root
       MYSQL_DATABASE: logis_track_db
     depends_on:
-      - logistrack_mysql
-      - redis
+      logistrack_mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - logistrack_network
 
