@@ -14,7 +14,7 @@ import {OrderStatus} from "../../../../models/enums/order.status";
   `
 })
 export class DispatchComponent {
-  statusDispatch = OrderStatus.PREPARATION;
+  statusDispatch = OrderStatus.DISPATCHED;
 
   despachoFilters = {
     pyme_name: '',
